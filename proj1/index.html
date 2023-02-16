@@ -1,7 +1,225 @@
-<html>
-	<head>
-	</head>
-	<body>
-		Project 1 here
-	</body>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<style>
+  body {
+    padding: 100px;
+    width: 1000px;
+    margin: auto;
+    text-align: left;
+    font-weight: 300;
+    font-family: 'Open Sans', sans-serif;
+    color: #121212;
+  }
+  h1, h2, h3, h4 {
+    font-family: 'Source Sans Pro', sans-serif;
+  }
+</style>
+<title>CS 184 Rasterizer</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link href="https://fonts.googleapis.com/css?family=Open+Sans|Source+Sans+Pro" rel="stylesheet">
+</head>
+
+
+<body>
+
+<h1 align="middle">CS 184: Computer Graphics and Imaging, Spring 2018</h1>
+<h1 align="middle">Project 1: Rasterizer</h1>
+<h2 align="middle">Kenneth Shyle, CS184-ellsworth</h2>
+<h2 align="middle">Eric Zhao Shyle, CS184-ellsworth</h2>
+
+<br><br>
+
+<div>
+
+<h2 align="middle">Overview</h2>
+<p>Give a high-level overview of what you implemented in this project. Think about what you've built as a whole. Share your thoughts on what interesting things you've learned from completing the project.</p>
+
+<h2 align="middle">Section I: Rasterization</h2>
+
+<h3 align="middle">Part 1: Rasterizing single-color triangles</h3>
+There are a couple steps in rasterizing a triangle. Since we are given the coordinates of the edges of the triangles in float values, I first determined the 
+smallest integer bounding box that can encapsulate the triangle - the smallest box of integer coordinates that is larger than the triangle. This was done by finding
+the ceiling of the largest x and y values for the top right coordinate of the box and the floor of the smallest x and y values for the bottom left coordinate of the box.
+<br><br>
+Using these values I iterated through every x, y pair within the box and determined whether that point was in the triangle using the plane test on the 3 edges of 
+the triangle and filled in the pixel in the buffer if they were with the color of the triangle. The test was made to be order independent by realizing that the sign 
+of the result of the three tests is should all be the same - ie. all >=0 or all <=0.
+<br><br>
+<img src = "screenshots for writeup/screenshot_2-15_15-45-49.png" style="width: 100%;">
+
+
+<h3 align="middle">Part 2: Antialiasing triangles</h3>
+My supersampling algorithm works by initializing a sample buffer that is <i><b>this->sample_rate</b></i> times larger than the actual buffer. This buffer essentially
+stores the samples by utilizing a similar structure to the framebuffer.
+<br><br>
+In the old framebuffer, coordinate (x, y) corresponded to the location (width * y + x) within the framebuffer. Now that we have to sample a coordinate multiple times
+we need to encode (x, y, sample_num) into the sample buffer so that we can save all the sample values of a particular coordinate. This is done by expanding upon the
+previous implementation by storing samples adjacent to one anther such that the first sample is adjacent to the second sample etc. such that the value of (x, y, sample_num) 
+is encoded in the sample buffer at location (width * rate * y + rate * x + sample_num) where rate is the number of samples we need to collect for supersampling.
+<br><br><br>
+As a result of this we had to edit the fill_pixel method as to essentially write the same value in all the samples since the pixel should still have the designated
+color. The final resolve to framebuffer was edited to take the average of all samples at (x, y) and set the corresponding value to the framebuffers (x, y). The 
+rasterization of the triangle was also altered such that instead of taking the midpoint of a pixel as its sample point, we take <i><b>this->sample_rate</b></i> 
+samples at <i><b>1/(rate+1)</b></i> intervals from one another to create a grid of <i><b>this->sample_rate</b></i> samples of a pixel - each of these samples were then
+treated like the previous samples.
+<br><br>
+<div align="middle">
+  <table style="width=100%">
+    <tr>
+      <td>
+        <img src="screenshots for writeup/screenshot_2-15_17-36-28.png" align="middle" width="400px"/>
+        <figcaption align="middle">Supersampling with rate 1</figcaption>
+      </td>
+      <td>
+        <img src="screenshots for writeup/screenshot_2-15_17-36-30.png" align="middle" width="400px"/>
+        <figcaption align="middle">Supersampling with rate 4</figcaption>
+      </td>
+      <td>
+        <img src="screenshots for writeup/screenshot_2-15_17-36-33.png" align="middle" width="400px"/>
+        <figcaption align="middle">Supersampling with rate 16</figcaption>
+      </td>
+    </tr>
+  </table>
+</div>
+
+<h3 align="middle">Part 3: Transforms</h3>
+
+He's just being a goofball and making a snow angel.
+<br><br>
+<img src = "screenshots for writeup/screenshot_2-15_18-22-39.png" style="width: 100%;">
+
+<h2 align="middle">Section II: Sampling</h2>
+
+<h3 align="middle">Part 4: Barycentric coordinates</h3>
+Barycentric coordinates are just a method to quatify a position of a coordinate within a triangle based on the coordinates of the edges of the triangle. It 
+says that all points within a triangle can be represented by <i><b>alpha * A + beta * B + gamma * C</b></i> where A, B, C are the coordinates of the edges of the triangle and
+alpha, beta and gamma are coefficients between 0 and 1 that sum up to 1 collectively.
+
+<br><br> 
+If you look at the image below it shows an interpolated triangle where the edges represent the solid colors red, green and blue respectively. Then the colors within
+the triangles are determined by their barycentric coordinates within the triangle as the alpha, beta and gamma values change depending on the coordinates the color
+gradually shifts between the three colors as they move closer from one vertice to another.
+<br><br>
+<img src = "screenshots for writeup/screenshot_2-15_19-8-48.png" style="width: 100%;">
+This is the result from rendering the Basic Svg 7
+
+<br><br>
+<img src = "screenshots for writeup/screenshot_2-15_18-51-8.png" style="width: 100%;">
+
+<h3 align="middle">Part 5: "Pixel sampling" for texture mapping</h3>
+Pixel sampling is the method in which we determine what color a picture should undertake from an underlying texture map by sampling a point within the texture map 
+that corresponds to the pixel in question. Often times the point is in between two coordinates within the texture map space and thus the method in which we sample 
+and interpolate the color determines the resulting image. Two methods are nearest neighbor sampling and bilinear sampling. In nearest neighbor we simply take the 
+texture of the closest coordinate within the texture map as the actual texture for the pixel while bilinear sampling uses the interpolation between the 4 nearest 
+integer coordinates within the texture space to determine a combination of the four textures that represents the pixel in between them.
+<br><br>
+This is an example of where bilinear is better. The Berkeley logo is clearly more smooth and readable using bilnear sampling.
+<br><br>
+<div align="middle">
+  <table style="width=100%">
+    <tr>
+      <td>
+        <img src="screenshots for writeup/screenshot_2-15_20-8-57.png" align="middle" width="400px"/>
+        <figcaption align="middle">Nearest neighbor sampling</figcaption>
+      </td>
+      <td>
+        <img src="screenshots for writeup/screenshot_2-15_20-9-1.png" align="middle" width="400px"/>
+        <figcaption align="middle">Bilinear interpolation sampling</figcaption>
+      </td>
+    </tr>
+  </table>
+</div>
+
+<br><br>
+Comparison of multiple methods
+<br><br>
+<div align="middle">
+  <table style="width=100%">
+    <tr>
+      <td>
+        <img src="screenshots for writeup/screenshot_2-15_20-15-56.png" align="middle" width="400px"/>
+        <figcaption align="middle">Nearest neighbor sampling || Supersample rate 1</figcaption>
+      </td>
+      <td>
+        <img src="screenshots for writeup/screenshot_2-15_20-16-1.png" align="middle" width="400px"/>
+        <figcaption align="middle">Nearest neighbor sampling || Supersample rate 16</figcaption>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <img src="screenshots for writeup/screenshot_2-15_20-16-10.png" align="middle" width="400px"/>
+        <figcaption align="middle">Bilinear interpolation sampling || Supersample rate 1</figcaption>
+      </td>
+      <td>
+        <img src="screenshots for writeup/screenshot_2-15_20-16-15.png" align="middle" width="400px"/>
+        <figcaption align="middle">Bilinear interpolation sampling || Supersample rate 16</figcaption>
+      </td>
+    </tr>
+  </table>
+</div>
+
+<br><br>
+The largest difference occurs between bilinear and nerest neighbor sampling at supersampling rate 1 as you can clearly more legibly read the text in the bilinearly 
+sampled image as the interpolation helps smooth the harsh transitions between colors. The nearest neighboor at supersampling rate 1 is clearly simply too faithful
+to the underlying values of the pixel and appears too pixelated as it immediately transitions from one texture value to another too suddenly whereas the interpolation 
+means that the colors slowly change from pixel to pixel due to the interpolation
+<br><br>
+However the differences between the other three images are hard to tell apart as essentially supersampling achieves a similar effect to bilinear sampling as it 
+increases the ammount of information available for one particular pixel about its texture and reduces the harshness of the transition as there are intermediary 
+values besides jsut the values within the texture map. As such stacking the two methods produces a percieveably blurrier image in comparison to using them separately.
+
+<h3 align="middle">Part 6: "Level sampling" with mipmaps for texture mapping</h3>
+Level Sampling essentially comes down to the method in which we decide to sample the value of a pixel from the texture map as we have multiple levels of texture maps
+with decreasing quality to best represent that resolution. As such there are three methods that we implemented in the project - level 0, which simply takes the 
+texture value from the highest texture level, level nearest, which finds the nearest texture map level most suitable for the resolution and uses its texture as the pixel value,
+and finally level bilinear, which finds the two levels which best represent the current resolution and interpolates their pixel values to generate a final pixel value.
+<br><br>
+
+The tadeoffs between the methods is noticable especially in the samples below and previous. As we utilize more of our methods the compute power rises exponentially as
+the number of samples that we need to take also rises. In terms of memory, texture level sampling alongside pixel sampling does not increase the amount of memory 
+required substantially as intermediary values are immediately discarded once they have been utilized. On the other hand supersampling increases the amount of memeory 
+we need as we to store an intermediary value for all the samples in the sample buffer. 
+<br><br>
+In terms of anti-aliasing power, texture level sampling only really helps anti-alias for lower quality images where it removes the jaggies that occur from the incorrect
+sampling of textures - in that it does not result in the intended behaviour. On the other hand pixel sampling is useful in all manner of cases however may result in 
+overblurring especially in the case of bilinear pixel sampling as it reduces the frequencies within the image naturally as a result of averaging. This leaves supersampling
+which has the strongest anti-aliasing power as it simply does the powerful task of sampling more! However, the tradeoff is that it is extremely computationally expensive
+both in memory and computationally. As such it supersampling is utlitized, there are very few cases in which other methods are worth the cost as stacking multiple of these
+techniques together often leaves a blurrier image due to over anti-aliasing.
+
+<br><br>
+Comparison of multiple methods
+<br><br>
+<div align="middle">
+  <table style="width=100%">
+    <tr>
+      <td>
+        <img src="screenshots for writeup/screenshot_2-15_21-47-26.png" align="middle" width="400px"/>
+        <figcaption align="middle">L_ZERO and P_NEAREST</figcaption>
+      </td>
+      <td>
+        <img src="screenshots for writeup/screenshot_2-15_21-47-31.png" align="middle" width="400px"/>
+        <figcaption align="middle">L_ZERO and P_LINEAR</figcaption>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <img src="screenshots for writeup/screenshot_2-15_21-47-40.png" align="middle" width="400px"/>
+        <figcaption align="middle">L_NEAREST and P_NEAREST</figcaption>
+      </td>
+      <td>
+        <img src="screenshots for writeup/screenshot_2-15_21-47-49.png" align="middle" width="400px"/>
+        <figcaption align="middle">L_NEAREST and P_LINEAR</figcaption>
+      </td>
+    </tr>
+  </table>
+</div>
+
+<h2 align="middle">Section III: Art Competition</h2>
+<p>If you are not participating in the optional art competition, don't worry about this section!</p>
+
+<h3 align="middle">Part 7: Draw something interesting!</h3>
+
+</body>
 </html>
