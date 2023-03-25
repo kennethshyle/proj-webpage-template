@@ -1,7 +1,254 @@
-<html>
-	<head>
-	</head>
-	<body>
-		Project 3-2 here
-	</body>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<style>  
+    div.padded {  
+      padding-top: 0px;  
+      padding-right: 100px;  
+      padding-bottom: 0.25in;  
+      padding-left: 100px;  
+    }  
+  </style> 
+<title>Your Name  |  CS 184</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="style.css" media="screen" />
+</head>
+<body>
+<br />
+<h1 align="middle">Assignment 3-2: Additional Features to PathTracer</h1>
+    <h2 align="middle">Kenneth Shyle | Eric Zhao</h2>
+    <h2 align="middle">(Webpage URL)</h2>
+
+    <div class="padded">
+
+        
+        * NOTE: For this project, you will choose TWO out of the four given parts to complete. One of those parts must be Part 1 or Part 2. In other words, you can choose any combination of two parts except the pair (Part 3, Part 4).
+
+
+        <h3 align="middle">Part 1. Mirror and Glass Materials</h3>
+
+        <p><b>
+            Show a sequence of six images of scene `CBspheres.dae` rendered with `max_ray_depth` set to 0, 1, 2, 3, 4, 5, and 100. The other settings should be at least 64 samples per pixel and 4 samples per light. Make sure to include all screenshots.
+        </b></p>
+        <p>
+            <div align="middle">
+                <table style="width:100%">
+                  <tr align="center">
+                    <td>
+                      <img src="images/out0.png" align="middle" width="400px"/>
+                      <figcaption>CBspheres.dae | Max Ray Depth = 0</figcaption>
+                    </td>
+                    <td>
+                      <img src="images/out1.png" align="middle" width="400px"/>
+                      <figcaption>CBspheres.dae | Max Ray Depth = 1</figcaption>
+                    </td>
+                  </tr>
+                  <tr align="center">
+                    <td>
+                      <img src="images/out2.png" align="middle" width="400px"/>
+                      <figcaption>CBspheres.dae | Max Ray Depth = 2</figcaption>
+                    </td>
+                    <td>
+                      <img src="images/out3.png" align="middle" width="400px"/>
+                      <figcaption>CBspheres.dae | Max Ray Depth = 3</figcaption>
+                    </td>
+                  </tr>
+                  <tr align="center">
+                    <td>
+                      <img src="images/out4.png" align="middle" width="400px"/>
+                      <figcaption>CBspheres.dae | Max Ray Depth = 4</figcaption>
+                    </td>
+                    <td>
+                      <img src="images/out5.png" align="middle" width="400px"/>
+                      <figcaption>CBspheres.dae | Max Ray Depth = 5</figcaption>
+                    </td>
+                  </tr>
+                  <tr align="center">
+                    <td>
+                      <img src="images/out100.png" align="middle" width="400px"/>
+                      <figcaption>CBspheres.dae | Max Ray Depth = 100</figcaption>
+                    </td>
+                  </tr>
+                </table>
+            </div>
+        </p>
+        <br>
+        <p><b>
+            Point out the new multibounce effects that appear in each image. 
+        </b></p>
+        <p>
+            In the first image we only see the light source which then after two bounces begins to fill the room and we see the colors of the wall, the shadow of 
+            the balls like in project 3-1 but now we also have a reflection of the light source from the mirror and glass balls. Then at max ray depth 2 the general 
+            color of the miror ball is established as the light from the walls reaches it. Then after max ray depth 3, the glass ball starts to take shape as the refracted 
+            rays beign to appear as we can see the top right of the room refracted into the ball - we also see the light pass throught the ball and onto the floor below it. 
+            Then at max ray depth 4 we see a light appear on the blue wall which is the final new large feature we see as the room just gets progressively slightly more bright 
+            as we trace more and more bounces.
+        </p>
+        <br>
+        <p><b>
+            Explain how these bounce numbers relate to the particular effects that appear. Make sure to include all screenshots.
+        </b></p>
+        <p>
+            Max Ray Depth 0: Light source shows up as it is the only source of light without any bounces that can be seen.
+            <br><br>
+            Max Ray Depth 1: Walls appear as the light boucnes off the walls from the light source and into the camera. Shadows on spheres appear as we consider then 
+            as objects that block the light. Reflection of the light source shows up on the balls as the light from the source bounces off the sphere to the camera. This 
+            reflection is less bright on the glass ball as only some of it is reflected according to Schlick's approximation.
+            <br><br>
+            Max Ray Depth 2: Walls appear in the mirror ball as the light which bounced of the walls bounces off the mirror ball towards the camera. Light appears 
+            on the bottom of the glass ball as it has refracted through the ball as is ready to exit the ball onto the floor.
+            <br><br>
+            Max Ray Depth 3: Glass ball starts to look like a glass ball and shows the light from the top right of the room. This shows up as the light bounces of the top right 
+            wall, into the back of the glass ball and finally refracted towards the front of the ball with it's third bounce. Light shows up on the bottom of glass ball 
+            as the light refracted out of the bottom of the ball from before bounces off of the floor.
+            <br><br>
+            Max Ray Depth 4: Light appears on the blue wall which is quite faint. Most likely from the light striking the mirror ball, bouncing off into the glass ball, 
+            refracted within the glass ball, which finally strikes the blue wall.
+            <br><br>
+            Max Ray Depth 5, 100: Not many discernable features seem to appear outside of the fact that the light on top of the spere becomes brighter, this is most
+            likely from the ray bouncing into the glass sphere, refracting towards the bottom of the sphere, striking the floor, reflecting back into the bottom of 
+            the sphere and then refracting back out of the top of the sphere.
+        </p>
+        <br>
+
+
+        <h3 align="middle">Part 2. Microfacet Material</h3>
+        <p><b>
+            Show a screenshot sequence of 4 images of scene `CBdragon_microfacet_au.dae` rendered with $\alpha$ set to 0.005, 0.05, 0.25 and 0.5. The other settings should be at least 128 samples per pixel and 1 samples per light. The number of bounces should be at least 5. Describe the differences between different images. Note that, to change the $\alpha$, just open the .dae file and search for `microfacet`.
+        </b></p>
+        <p>
+            Your response goes here.
+        </p>
+        <br>
+        <p><b>
+            Show two images of scene `CBbunny_microfacet_cu.dae` rendered using cosine hemisphere sampling (default) and your importance sampling. The sampling rate should be fixed at 64 samples per pixel and 1 samples per light. The number of bounces should be at least 5. Briefly discuss their difference.
+        </b></p>
+        <p>
+            Your response goes here.
+        </p>
+        <br>
+        <p><b>
+            Show at least one image with some other conductor material, replacing `eta` and `k`. Note that you should look up values for real data rather than modifying them arbitrarily. Tell us what kind of material your parameters correspond to. 
+        </b></p>
+        <p>
+            Your response goes here.
+        </p>
+        <br>
+        
+        
+        
+
+        <h3 align="middle">Part 3. Environment Lightl</h3>
+        <b>Pick one *.exr* file to use for all subparts here. Include a converted *.jpg* of it in your website so we know what map you are using.</b>
+        
+        <p><b>
+            In a few sentences, explain the ideas behind environment lighting (i.e. why we do it/how it works).
+        </b></p>
+        <p>
+            Your response goes here.
+        </p>
+        <br>
+        <p><b>
+            Show the *probability_debug.png* file for the *.exr* file you are using, generated using the `save_probability_debug()` helper function after initializing your probability distributions.
+        </b></p>
+        <p>
+            Your response goes here.
+        </p>
+        <br>
+        <p><b>
+            Use the `bunny_unlit.dae` scene and your environment map *.exr* file and render two pictures, one with uniform sampling and one with importance sampling. Use 4 samples per pixel and 64 samples per light in each. Compare noise levels. Make sure to include all screenshots.
+        </b></p>
+        <p>
+            Your response goes here.
+        </p>
+        <br>
+        <p><b>
+            Use a different image (if you did part 2, we recommend `bunny_microfacet_cu_unlit.dae`) and your environment map *.exr* file and render two pictures, one with uniform sampling and one with importance sampling. Use 4 samples per pixel and 64 samples per light in each. Compare noise levels. Make sure to include all screenshots.
+        </b></p>
+        <p>
+            Your response goes here.
+        </p>
+        <br>
+
+
+
+        <h3 align="middle">Part 4. Depth of Field</h3>
+        <b>
+            For these subparts, we recommend using a microfacet BSDF scene to show off the cool out of focus effects you can get with depth of field!
+        </b>
+        <p><b>
+            In a few sentences, explain the differences between a pinhole camera model and a thin-lens camera model. 
+        </b></p>
+        <p>
+            The largest difference between a pinhole camera and a thin lens model is that a pinhole model is able to focus light from any distance. Unlike the thin 
+            lens model which has a focal plane, a pinhole only has one small opening which only allows light to come through which means that everything will be in focus.
+        </p>
+        <br>
+        <p><b>
+            Show a "focus stack" where you focus at 4 visibly different depths through a scene. Make sure to include all screenshots.
+        </b></p>
+        <p>
+            <div align="middle">
+                <table style="width:100%">
+                  <tr align="center">
+                    <td>
+                      <img src="images/balls3.7.png" align="middle" width="400px"/>
+                      <figcaption>CBspheres.dae | Focal Distance = 3.7 | Lens Radius = 2.3</figcaption>
+                      <figcaption>Focus occurs in front of all spheres</figcaption>
+                    </td>
+                    <td>
+                      <img src="images/balls4.5.png" align="middle" width="400px"/>
+                      <figcaption>CBspheres.dae | Focal Distance = 4.5 | Lens Radius = 2.3</figcaption>
+                      <figcaption>Focus occurs on glass sphere</figcaption>
+                    </td>
+                  </tr>
+                  <tr align="center">
+                    <td>
+                      <img src="images/balls5.2.png" align="middle" width="400px"/>
+                      <figcaption>CBspheres.dae | Focal Distance = 5.2 | Lens Radius = 2.3</figcaption>
+                      <figcaption>Focus occurs on mirror sphere</figcaption>
+                    </td>
+                    <td>
+                      <img src="images/balls5.7.png" align="middle" width="400px"/>
+                      <figcaption>CBspheres.dae | Focal Distance = 5.7 | Lens Radius = 2.3</figcaption>
+                      <figcaption>Focus occurs on back wall</figcaption>
+                    </td>
+                  </tr>
+                </table>
+            </div>
+        </p>
+        <br>
+        <p><b>
+            Show a sequence of 4 pictures with visibly different aperture sizes, all focused at the same point in a scene. Make sure to include all screenshots.
+        </b></p>
+        <p>
+            <div align="middle">
+                <table style="width:100%">
+                  <tr align="center">
+                    <td>
+                      <img src="images/balls0.png" align="middle" width="400px"/>
+                      <figcaption>CBspheres.dae | Focal Distance = 4.5 | Lens Radius = 0.0</figcaption>
+                    </td>
+                    <td>
+                      <img src="images/balls02.png" align="middle" width="400px"/>
+                      <figcaption>CBspheres.dae | Focal Distance = 4.5 | Lens Radius = 0.2</figcaption>
+                    </td>
+                  </tr>
+                  <tr align="center">
+                    <td>
+                      <img src="images/balls03.png" align="middle" width="400px"/>
+                      <figcaption>CBspheres.dae | Focal Distance = 4.5 | Lens Radius = 0.3</figcaption>
+                    </td>
+                    <td>
+                      <img src="images/balls05.png" align="middle" width="400px"/>
+                      <figcaption>CBspheres.dae | Focal Distance = 4.5 | Lens Radius = 0.5</figcaption>
+                    </td>
+                  </tr>
+                </table>
+            </div>
+        </p>
+        <br>
+
+    </div>
+</body>
 </html>
