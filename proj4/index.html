@@ -258,5 +258,103 @@ was rasterized into the image we are able to generate. </p>
           </td>
     </tr>
   </table>
+  <h3 align="middle">Show a screenshot of your texture mapping shader using your own custom texture by modifying the textures in /textures/.</h3>
+  <table style="width=100%">
+    <tr>
+        <td align="center">
+        <img src="images/wood_cloth.png" align="middle" width="500px"/>
+        <figcaption align="middle">Wood texture on cloth</figcaption>
+        </td>
+        <td align="center">
+          <img src="images/wood_sphere.png" align="middle" width="500px"/>
+          <figcaption align="middle">Wood texture on sphere</figcaption>
+          </td>
+    </tr>
+  </table>
+  <h3 align="middle">Show a screenshot of bump mapping on the cloth and on the sphere. Show a screenshot of displacement mapping on the sphere. Use the same texture for both renders. You can either provide your own texture or use one of the ones in the textures directory, BUT choose one that's not the default texture_2.png. Compare the two approaches and resulting renders in your own words. Compare how your the two shaders react to the sphere by changing the sphere mesh's coarseness by using -o 16 -a 16 and then -o 128 -a 128.</h3>
+  <table style="width=100%">
+    <tr>
+        <td align="center">
+        <img src="images/bump_cloth.png" align="middle" width="500px"/>
+        <figcaption align="middle">Bump mapping on the cloth</figcaption>
+        </td>
+        <td align="center">
+          <img src="images/bump_sphere.png" align="middle" width="500px"/>
+          <figcaption align="middle">Bump mapping on the sphere</figcaption>
+          </td>
+    </tr>
+    <tr>
+      <td align="center">
+      <img src="images/disp_cloth.png" align="middle" width="500px"/>
+      <figcaption align="middle">Displacement mapping on the cloth</figcaption>
+      </td>
+      <td align="center">
+        <img src="images/disp_sphere.png" align="middle" width="500px"/>
+        <figcaption align="middle">Displacement mapping on the sphere</figcaption>
+        </td>
+  </tr>
+  </table>
+  <p>
+    Essentially the difference is that bump mapping makes the sphere appear to have a texture painted on top giving the illusion of reality, however, it doesn't have 
+    the depth that can be seen in displacement mapping which by using depth allows us to distinguish between the individual bricks. This is especially clear in the 
+    image of the sphere as bump mapping has all the right shadows but looks like a toy ball with the proper colors and shadows painted on whilst displacement mapping 
+    looks like a sphere made of bricks having grooves and valleys corresponding to the shadows.
+  </p>
+  <table style="width=100%">
+    <tr>
+        <td align="center">
+          <img src="images/o8_bump_cloth.png" align="middle" width="250px"/>
+          <figcaption align="middle">Bump mapping on the cloth | Parameters: -o 16 -a 16</figcaption>
+        </td>
+        <td align="center">
+          <img src="images/o8_bump_sphere.png" align="middle" width="250px"/>
+          <figcaption align="middle">Bump mapping on the sphere | Parameters: -o 16 -a 16</figcaption>
+        </td>
+        <td align="center">
+          <img src="images/o8_disp_cloth.png" align="middle" width="250px"/>
+          <figcaption align="middle">Displacement mapping on the cloth | Parameters: -o 16 -a 16</figcaption>
+        </td>
+        <td align="center">
+          <img src="images/o8_disp_sphere.png" align="middle" width="250px"/>
+          <figcaption align="middle">Displacement mapping on the sphere | Parameters: -o 16 -a 16</figcaption>
+        </td>
+    </tr>
+    <tr>
+      <td align="center">
+        <img src="images/o128_bump_cloth.png" align="middle" width="250px"/>
+        <figcaption align="middle">Bump mapping on the cloth | Parameters: -o 128 -a 128</figcaption>
+      </td>
+      <td align="center">
+        <img src="images/o128_bump_sphere.png" align="middle" width="250px"/>
+        <figcaption align="middle">Bump mapping on the sphere | Parameters: -o 128 -a 128</figcaption>
+      </td>
+      <td align="center">
+        <img src="images/o128_disp_cloth.png" align="middle" width="250px"/>
+        <figcaption align="middle">Displacement mapping on the cloth | Parameters: -o 128 -a 128</figcaption>
+      </td>
+      <td align="center">
+        <img src="images/o128_disp_sphere.png" align="middle" width="250px"/>
+        <figcaption align="middle">Displacement mapping on the sphere | Parameters: -o 128 -a 128</figcaption>
+      </td>
+    </tr>
+  </table>
+  <p>
+    You can clearly see from the images that displacement mapping is heavily impacted on the coarseness of the mesh as the coarse mesh looks completely incorrect as the valleys
+    aren't the correct depth due to a lack of fine grain mesh tools to move the vertices to their proper positions. On the other had bump mapping is completely unaffected as it 
+    simply has to take the shadow values from the texture map and doesn't care about the height and depth of the mesh itself.
+  </p>
+  <h3 align="middle">Show a screenshot of your mirror shader on the cloth and on the sphere.</h3>
+  <table style="width=100%">
+    <tr>
+        <td align="center">
+        <img src="images/mirror_cloth.png" align="middle" width="500px"/>
+        <figcaption align="middle">Mirror shader on the cloth</figcaption>
+        </td>
+        <td align="center">
+          <img src="images/mirror_sphere.png" align="middle" width="500px"/>
+          <figcaption align="middle">Mirror shader on the sphere</figcaption>
+          </td>
+    </tr>
+    </table>
 </body>
 </html>
